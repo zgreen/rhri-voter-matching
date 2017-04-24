@@ -9,7 +9,7 @@ This is a Node CLI script to scrape Mailchimp data from the Rhode Island SOS web
 3. `npm install`
 
 ## Usage
-This repo contains a single Node.js executable, `index.js`. The following args a valid:
+This repo contains a single Node.js executable, `index.js`. The following args are valid:
 
 | Argument    | Type     | Description    |
 | ----------- | -------- | -----------    |
