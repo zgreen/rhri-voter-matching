@@ -31,29 +31,35 @@ function prepareRepData ($, str) {
  * @return {Object} Data object containing relevant district and rep data.
  */
 function getVoterSOSPage (memberData = {}) {
-  const {id, firstName, lastName} = memberData
   const {address, zip, city} = cliArgs
-  const data = Object.assign({}, {address, city, zip}, memberData)
+  const custom = address && zip && city
+  const queryData = custom ? {address, zip, city} : memberData
+  const {id, firstName, lastName} = custom
+    ? {id: '', firstName: '', lastName: ''}
+    : memberData
+  const data = Object.assign({}, {id, firstName, lastName}, queryData)
   // Bail if no data.
   if (!data.address.length || !data.zip.length || !data.city.length) {
     console.log(red('No data.'))
     return
   }
   console.log(
-    yellow(
-      `Requesting data for ${firstName} ${lastName}, id number ${bold(id)}...`
-    )
+    !custom
+      ? yellow(
+          `Requesting data for ${firstName} ${lastName}, id number ${bold(id)}...`
+        )
+      : yellow(`Requesting data for ${address}...`)
   )
   // Format data for URL query.
-  const formattedData = Object.keys(data).reduce((acc, cur) => {
-    acc[cur] = encodeURIComponent(acc[cur])
+  const formattedData = Object.keys(data).reduce((acc, key) => {
+    acc[key] = encodeURIComponent(data[key])
     return acc
   }, {})
   return new Promise(resolve =>
     // GET request.
     axios
       .get(
-        `https://vote.sos.ri.gov/ovr/general?step=1&address%5Bgeneral%5D%5Bstate%5D=RI&address%5Bgeneral%5D%5Baddress_line_1%5D=${data.address}&address%5Bgeneral%5D%5Bcity%5D=${data.city}&address%5Bgeneral%5D%5Bzip%5D=${data.zip}&general_address_validation_callback=general&submit=submit`
+        `https://vote.sos.ri.gov/ovr/general?step=1&address%5Bgeneral%5D%5Bstate%5D=RI&address%5Bgeneral%5D%5Baddress_line_1%5D=${formattedData.address}&address%5Bgeneral%5D%5Bcity%5D=${formattedData.city}&address%5Bgeneral%5D%5Bzip%5D=${formattedData.zip}&general_address_validation_callback=general&submit=submit`
       )
       .catch(err => {
         console.error(err)
@@ -127,7 +133,7 @@ function filterToValidMembers (err, data, cb) {
       })
       .filter(member => {
         const {MMERGE3, MMERGE5} = member.merge_fields
-        return (MMERGE3.zip || MMERGE3) && MMERGE3.addr1 && MMERGE3.city
+        return (MMERGE3.zip || MMERGE5) && MMERGE3.addr1 && MMERGE3.city
       })
     // Filter members w/ zips.
     cb(members)
@@ -155,7 +161,7 @@ function readMemberData () {
  */
 function output (members, index = 0, doRecursive = false, max = 10) {
   if (cliArgs['list-valid-members']) {
-    console.log(members)
+    console.log(JSON.stringify(members, null, 2))
     return
   }
   const idx = cliArgs.id
