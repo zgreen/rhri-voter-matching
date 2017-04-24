@@ -10,6 +10,7 @@ This is a Node CLI script to scrape Mailchimp data from the Rhode Island SOS web
 
 ## Usage
 This repo contains a single Node.js executable, `index.js`. The following args a valid:
+
 | Argument    | Type     | Description    |
 | ----------- | -------- | -----------    |
 | `log`       | `bool`   | Log the output |
