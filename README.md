@@ -8,6 +8,9 @@ This is a Node CLI script to scrape Mailchimp data from the Rhode Island SOS web
 2. Ensure you've got Node >= 7.9.0 and npm >= 4.2.0
 3. `npm install`
 
+## Data
+Note that this repo currently queries a local `members.json` data file, and not the Mailchimp API directly. You'll need this file if you want to run this CLI locally. If you have API access, you can download the members list into a `members.json` file.
+
 ## Usage
 This repo contains a single Node.js executable, `index.js`. The following args are valid:
 
