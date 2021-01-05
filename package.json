@@ -9,7 +9,7 @@
   "author": "Zach Green",
   "license": "MIT",
   "dependencies": {
-    "axios": "^0.16.1",
+    "axios": "^0.21.1",
     "chalk": "^1.1.3",
     "cheerio": "^0.22.0",
     "minimist": "^1.2.0"
